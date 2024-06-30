@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet, Button, Pressable } from 'react-native';
 import { supabase } from '../../utils/supabase';
 import QRCode from 'react-native-qrcode-svg'; 
 
@@ -28,15 +28,24 @@ export default function Tab() {
   
   return (
     <View style={styles.container}>
-      <Button title='Create a new qr code' onPress={createQRCode} />
+      
       {qrCreated && qrValue ? (
         <QRCode 
-          value={qrValue}
-          size={200} 
-          color="black"
-          backgroundColor="white"
+        value={qrValue}
+        size={250} 
+        color="black"
+        backgroundColor="white"
         />
-      ) : null}
+      ) : <Pressable onPress={createQRCode} style={styles.button}>
+          <Text style={ styles.text }>Create a new qr code</Text>
+        </Pressable>}
+
+      {qrCreated && qrValue ? (
+        <Pressable onPress={createQRCode} style={[styles.button, { position: 'absolute', bottom:20 }]}>
+          <Text style={ styles.text }>Create another qr code</Text>
+        </Pressable>
+      ) : null }
+
     </View>
   );
 }
@@ -46,5 +55,21 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
   },
 });

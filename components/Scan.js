@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from "react-native";
+import { Text, View, StyleSheet, Pressable } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { validate as validateUUID } from 'uuid';
 import { supabase } from '../utils/supabase';
 
 export default function Scan() {
 	const [hasPermission, setHasPermission] = useState(null);
-	const [scanned, setScanned] = useState(false);
+	const [scanned, setScanned] = useState(true);
 	const [data, setData] = useState(null);
 
 	useEffect(() => {
@@ -26,29 +26,30 @@ export default function Scan() {
 	  }
 
 	const handleBarCodeScanned = async ({ type, data }) => {
-		console.log("scanned but not checked yet");
-		setScanned(true);
-		
 		// Check if the scanned data is a valid UUID
 		if (!validateUUID(data)) {
-			alert('Invalid QR Code');
-			console.log("The content of the qr code is not an UUID");
+			// Might do something to alert the user of a possible scam attempt, but for now just return
 			return;
 		}
-
-		alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+		
+		console.log("the qr contains an uuid, checking...");
+		setScanned(true);
+		
 		
 		try {
-			const { data: supabaseData, error } = await supabase
-				.from('qr')
-				.select('created_at, text')
-				.eq('id', data)
-				.limit(1);
-
+			const { data: supabaseData, error } = await supabase.rpc('check_qr', {qr_uuid: data})
+			
 			if (error) {
 				throw error;
 			} else {
-				console.log("the qr code \"", supabaseData[0].text, "\" was created on ", supabaseData[0].created_at);
+				setData(supabaseData);
+				console.log(supabaseData);
+
+				if(supabaseData) {
+					alert(`Qr exists`);
+				} else {
+					alert(`Qr not exists`);
+				}
 				
 			}
 		} catch (error) {
@@ -57,17 +58,20 @@ export default function Scan() {
 	};
 
 	return (
-		<View>
-		  <CameraView
-			onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-			barcodeScannerSettings={{
-			  barcodeTypes: ["qr", "pdf417"],
-			}}
-			style={{width: 500, height: 100, flex: 1}} // Very temporary fix, i hate this fix
-		  />
-		  {scanned && (
-			<Button title={"Tap to Scan Again"} onPress={() => setScanned(false)} />
-		  )}
+		<View style={styles.container}>
+			<CameraView
+				onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+				barcodeScannerSettings={{
+					barcodeTypes: ["qr", "pdf417"],
+				}}
+				style={{width: 430, height: 100, flex: 1}} // Very temporary fix, i hate this fix
+			/>
+
+
+			<Pressable onPress={() => { setScanned(false); console.log("attivato"); }} style={[styles.button, { maxHeight: 250 }]}>
+				 { scanned ? <Text style={ styles.text }>Scan again</Text> : <Text style={ styles.text }>Scan...</Text> }
+			</Pressable>
+
 		</View>
 	);
 }
@@ -77,5 +81,21 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 32,
+    borderRadius: 4,
+    elevation: 3,
+    backgroundColor: 'black',
+  },
+  text: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: 'bold',
+    letterSpacing: 0.25,
+    color: 'white',
   },
 });
