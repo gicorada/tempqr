@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, Button, Pressable } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { supabase } from '../../utils/supabase';
 import QRCode from 'react-native-qrcode-svg'; 
 
@@ -7,8 +7,13 @@ export default function Tab() {
   const [data, setData] = useState<{ uuid: string } | null>(null);
   const [qrCreated, setQrCreated] = useState(false);
   const [qrValue, setQRValue] = useState< string | null>(null); 
+  const [isLoading, setIsLoading] = useState(false);
 
   const createQRCode = async () => {
+    if (isLoading) return;
+
+    setIsLoading(true);
+
     try {
       const { data: supabaseData, error } = await supabase.rpc('add_qr');
   
@@ -23,6 +28,8 @@ export default function Tab() {
       }
     } catch (error: any) {
       console.error('Error fetching data from Supabase:', error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -36,14 +43,14 @@ export default function Tab() {
         color="black"
         backgroundColor="white"
         />
-      ) : <Pressable onPress={createQRCode} style={styles.button}>
+      ) : <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={styles.button}>
           <Text style={ styles.text }>Create a new qr code</Text>
-        </Pressable>}
+        </TouchableOpacity>}
 
       {qrCreated && qrValue ? (
-        <Pressable onPress={createQRCode} style={[styles.button, { position: 'absolute', bottom:20 }]}>
+        <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={[styles.button, { position: 'absolute', bottom:20 }]}>
           <Text style={ styles.text }>Create another qr code</Text>
-        </Pressable>
+        </TouchableOpacity>
       ) : null }
 
     </View>
