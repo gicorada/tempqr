@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Pressable, Modal } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable, Modal, Animated } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { validate as validateUUID } from 'uuid';
 import { supabase } from '../utils/supabase';
@@ -12,7 +12,10 @@ export default function Scan() {
 	const [data, setData] = useState(null);
 	const [scamModalVisible, setScamModalVisible] = useState(false);
 	const [successModalVisible, setSuccessModalVisible] = useState(false);
-	const [errorModalVisible, setErrorModalVisible] = useState(false);
+	const [alreadyValidatedModalVisible, setAlreadyValidatedModalVisible] = useState(false);
+	const [notValidModalVisible, setNotValidModalVisible] = useState(false);
+
+	const shakeAnimationValue = new Animated.Value(0);
 
 	useEffect(() => {
 		const getCameraPermissions = async () => {
@@ -22,6 +25,39 @@ export default function Scan() {
 	
 		getCameraPermissions();
 	}, []);
+
+	useEffect(() => {
+		// Function to handle animation
+		const shakeIcon = () => {
+		  // Reset animation value
+		  shakeAnimationValue.setValue(0);
+	
+		  // Shake animation sequence
+		  Animated.loop(
+			Animated.sequence([
+				Animated.timing(shakeAnimationValue, { toValue: 20, duration: 50, useNativeDriver: true }),
+				Animated.timing(shakeAnimationValue, { toValue: -20, duration: 100, useNativeDriver: true }),
+				Animated.timing(shakeAnimationValue, { toValue: 10, duration: 50, useNativeDriver: true }),
+				Animated.timing(shakeAnimationValue, { toValue: -10, duration: 100, useNativeDriver: true }),
+				Animated.timing(shakeAnimationValue, { toValue: 0, duration: 50, useNativeDriver: true }),
+				Animated.timing(shakeAnimationValue, { toValue: 0, duration: 500, useNativeDriver: true }),
+			])
+		  ).start()
+		};
+	
+		// Start animation when scam modal becomes visible
+		if (scamModalVisible) {
+			shakeIcon();
+		} else {
+		// Stop animation and reset value when modal is hidden
+		shakeAnimationValue.setValue(0);
+		}
+	  
+		// Cleanup animation on component unmount or modal hide
+		return () => {
+		shakeAnimationValue.setValue(0);
+		};
+	  }, [scamModalVisible]);
 
 	if (hasPermission === null) {
 		return <Text>Requesting for camera permission</Text>;
@@ -50,12 +86,15 @@ export default function Scan() {
 				setData(supabaseData);
 				console.log(supabaseData);
 
-				if(supabaseData) {
+				if(supabaseData.status === 'ok') {
 					console.log(`Qr exists`);
 					setSuccessModalVisible(true);
+				} else if(supabaseData.status === 'already_validated') {
+					console.log(`Qr already validated`);
+					setAlreadyValidatedModalVisible(true);
 				} else {
 					console.log(`Qr not exists`);
-					setErrorModalVisible(true);
+					setNotValidModalVisible(true);
 				}
 				
 			}
@@ -80,11 +119,13 @@ export default function Scan() {
 					transparent={true}
 					visible={scamModalVisible}
 					onRequestClose={() => {
-						setModalVisible(!scamModalVisible);
+						setScamModalVisible(!scamModalVisible);
 					}}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>
-							<Ionicons name="alert-circle" size={100} color="red" />
+							<Animated.View style={[styles.iconWrapper, { transform: [{ translateX: shakeAnimationValue }] }]}>
+								<Ionicons name="alert-circle" size={100} color="red" />
+							</Animated.View>
 							<Text style={styles.modalTitle}>Possible scam attempt</Text>
 							<Text style={styles.modalText}>You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt</Text>
 							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
@@ -103,14 +144,15 @@ export default function Scan() {
 					transparent={true}
 					visible={successModalVisible}
 					onRequestClose={() => {
-						Alert.alert('Modal has been closed.');
-						setModalVisible(!successModalVisible);
+						setSuccessModalVisible(!successModalVisible);
 					}}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>
-							<Text style={styles.modalText}>Hello World!</Text>
+							<Ionicons name="checkmark-circle" size={100} color="green" />
+							<Text style={styles.modalTitle}>Success</Text>
+							<Text style={styles.modalText}>You scanned a valid QR code. The database has been notified and the qr has been marked as used</Text>
 							<Pressable
-								style={[styles.button]}
+								style={[styles.button, { backgroundColor: 'green'}]}
 								onPress={() => setSuccessModalVisible(!successModalVisible)}>
 								<Text style={styles.text}>Hide Modal</Text>
 							</Pressable>
@@ -118,21 +160,45 @@ export default function Scan() {
 					</View>
 				</Modal>
 
-				{/* Error */}
+				{/* Qr Code already validated */}
 				<Modal
 					animationType="slide"
 					transparent={true}
-					visible={errorModalVisible}
+					visible={alreadyValidatedModalVisible}
 					onRequestClose={() => {
-						Alert.alert('Modal has been closed.');
-						setModalVisible(!errorModalVisible);
+						setAlreadyValidatedModalVisible(!alreadyValidatedModalVisible);
 					}}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>
-							<Text style={styles.modalText}>Hello World!</Text>
+							<Ionicons name="arrow-undo-circle" size={100} color="orange" />
+							<Text style={styles.modalTitle}>Already Validated</Text>
+							<Text style={styles.modalText}>You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR</Text>
 							<Pressable
-								style={[styles.button]}
-								onPress={() => setErrorModalVisible(!errorModalVisible)}>
+								style={[styles.button, { backgroundColor: 'orange'}]}
+								onPress={() => setAlreadyValidatedModalVisible(!alreadyValidatedModalVisible)}>
+								<Text style={styles.text}>Hide Modal</Text>
+							</Pressable>
+						</View>
+					</View>
+				</Modal>
+
+				{/* Qr Code not valid */}
+				<Modal
+					animationType="slide"
+					transparent={true}
+					visible={notValidModalVisible}
+					onRequestClose={() => {
+						setNotValidModalVisible(!notValidModalVisible);
+					}}>
+					<View style={styles.centeredView}>
+						<View style={styles.modalView}>
+							<Ionicons name="close-circle" size={100} color="red" />
+							<Text style={styles.modalTitle}>Error</Text>
+							<Text style={styles.modalText}>You scanned an invalid qr code. The content is plausible, but the database does not contain it</Text>
+							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
+							<Pressable
+								style={[styles.button, { backgroundColor: 'red'}]}
+								onPress={() => setNotValidModalVisible(!notValidModalVisible)}>
 								<Text style={styles.text}>Hide Modal</Text>
 							</Pressable>
 						</View>
@@ -209,5 +275,8 @@ const styles = StyleSheet.create({
 	},
 	buttonNotScanned: {
 		backgroundColor: 'red',
+	},
+	iconWrapper: {
+		marginBottom: 20,
 	},
 });
