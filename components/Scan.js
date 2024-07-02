@@ -14,6 +14,7 @@ export default function Scan() {
 	const [successModalVisible, setSuccessModalVisible] = useState(false);
 	const [alreadyValidatedModalVisible, setAlreadyValidatedModalVisible] = useState(false);
 	const [notValidModalVisible, setNotValidModalVisible] = useState(false);
+	const [otherOrganizationModalVisible, setOtherOrganizationModalVisible] = useState(false);
 
 	const shakeAnimationValue = new Animated.Value(0);
 
@@ -76,7 +77,6 @@ export default function Scan() {
 		
 		console.log("the qr contains an uuid, checking...");
 		
-		
 		try {
 			const { data: supabaseData, error } = await supabase.rpc('check_qr', {qr_uuid: data})
 			
@@ -87,13 +87,12 @@ export default function Scan() {
 				console.log(supabaseData);
 
 				if(supabaseData.status === 'ok') {
-					console.log(`Qr exists`);
 					setSuccessModalVisible(true);
 				} else if(supabaseData.status === 'already_validated') {
-					console.log(`Qr already validated`);
 					setAlreadyValidatedModalVisible(true);
+				} else if(supabaseData.status === 'wrong_organization') {
+					setOtherOrganizationModalVisible(true);
 				} else {
-					console.log(`Qr not exists`);
 					setNotValidModalVisible(true);
 				}
 				
@@ -132,7 +131,7 @@ export default function Scan() {
 							<Pressable
 								style={[styles.button, { backgroundColor: 'red'}]}
 								onPress={() => setScamModalVisible(!scamModalVisible)}>
-								<Text style={styles.text}>Hide Modal</Text>
+								<Text style={styles.text}>Ok</Text>
 							</Pressable>
 						</View>
 					</View>
@@ -154,7 +153,7 @@ export default function Scan() {
 							<Pressable
 								style={[styles.button, { backgroundColor: 'green'}]}
 								onPress={() => setSuccessModalVisible(!successModalVisible)}>
-								<Text style={styles.text}>Hide Modal</Text>
+								<Text style={styles.text}>Ok</Text>
 							</Pressable>
 						</View>
 					</View>
@@ -176,7 +175,7 @@ export default function Scan() {
 							<Pressable
 								style={[styles.button, { backgroundColor: 'orange'}]}
 								onPress={() => setAlreadyValidatedModalVisible(!alreadyValidatedModalVisible)}>
-								<Text style={styles.text}>Hide Modal</Text>
+								<Text style={styles.text}>Ok</Text>
 							</Pressable>
 						</View>
 					</View>
@@ -199,7 +198,32 @@ export default function Scan() {
 							<Pressable
 								style={[styles.button, { backgroundColor: 'red'}]}
 								onPress={() => setNotValidModalVisible(!notValidModalVisible)}>
-								<Text style={styles.text}>Hide Modal</Text>
+								<Text style={styles.text}>Ok</Text>
+							</Pressable>
+						</View>
+					</View>
+				</Modal>
+
+
+				{/* Qr Code by another organization */}
+				<Modal
+					animationType="slide"
+					transparent={true}
+					visible={otherOrganizationModalVisible}
+					onRequestClose={() => {
+						setOtherOrganizationModalVisible(!otherOrganizationModalVisible);
+					}}>
+					<View style={styles.centeredView}>
+						<View style={styles.modalView}>
+							<Ionicons name="business" size={100} color="darkred" />
+							<Text style={styles.modalTitle}>Qr code not in your organization</Text>
+							<Text style={styles.modalText}>You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account</Text>
+							<Text style={styles.modalText}>The qr code has <Text style={{fontWeight: 'bold'}}>not</Text> been marked as used</Text>
+							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
+							<Pressable
+								style={[styles.button, {backgroundColor: 'darkred'}]}
+								onPress={() => setOtherOrganizationModalVisible(!otherOrganizationModalVisible)}>
+								<Text style={styles.text}>Ok</Text>
 							</Pressable>
 						</View>
 					</View>
