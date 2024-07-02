@@ -48,3 +48,47 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+Backend functions:
+
+CREATE OR REPLACE FUNCTION check_qr(qr_uuid UUID)
+RETURNS JSON
+AS $$
+DECLARE
+  status TEXT := 'not_found';
+  qr_data RECORD;
+  user_organization_id UUID;
+BEGIN
+  SELECT organization_id
+    INTO user_organization_id
+    FROM memberships
+    WHERE user_id = auth.uid();
+
+  SELECT already_validated, text, organization_id
+    INTO qr_data
+    FROM public.qr
+    WHERE id = qr_uuid;
+
+  IF FOUND THEN
+    IF user_organization_id != qr_data.organization_id THEN
+      status := 'wrong_organization';
+    ELSE
+      IF qr_data.already_validated THEN
+        status := 'already_validated';
+      ELSE
+        UPDATE public.qr
+          SET already_validated = true
+          WHERE id = qr_uuid;
+        status := 'ok';
+      END IF;
+    END IF;
+  END IF;
+
+  RETURN to_jsonb(json_build_object('status', status));
+EXCEPTION
+  WHEN others THEN
+    RETURN to_jsonb(json_build_object('status', 'error', 'message', SQLERRM));
+END;
+$$ LANGUAGE plpgsql;
+
