@@ -44,12 +44,12 @@ export default function Tab() {
         backgroundColor="white"
         />
       ) : <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={styles.button}>
-          <Text style={ styles.text }>Create a new qr code</Text>
+          <Text style={ styles.buttonText }>Create a new qr code</Text>
         </TouchableOpacity>}
 
       {qrCreated && qrValue ? (
         <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={[styles.button, { position: 'absolute', bottom:20 }]}>
-          <Text style={ styles.text }>Create another qr code</Text>
+          <Text style={ styles.buttonText }>Create another qr code</Text>
         </TouchableOpacity>
       ) : null }
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     elevation: 3,
     backgroundColor: 'black',
   },
-  text: {
+  buttonText: {
     fontSize: 16,
     lineHeight: 21,
     fontWeight: 'bold',

@@ -144,11 +144,12 @@ export default function Scan() {
 							<Text style={styles.modalTitle}>Possible scam attempt</Text>
 							<Text style={styles.modalText}>You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt</Text>
 							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
-							<Pressable
+							<TouchableOpacity
+								activeOpacity={0.8}
 								style={[styles.button, { backgroundColor: 'red'}]}
 								onPress={() => { setScamModalVisible(!scamModalVisible); Vibration.cancel() }}>
 								<Text style={styles.text}>Ok</Text>
-							</Pressable>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</Modal>
@@ -166,11 +167,12 @@ export default function Scan() {
 							<Ionicons name="checkmark-circle" size={100} color="green" />
 							<Text style={styles.modalTitle}>Success</Text>
 							<Text style={styles.modalText}>You scanned a valid QR code. The database has been notified and the qr has been marked as used</Text>
-							<Pressable
+							<TouchableOpacity
+								activeOpacity={0.8}
 								style={[styles.button, { backgroundColor: 'green'}]}
 								onPress={() => setSuccessModalVisible(!successModalVisible)}>
 								<Text style={styles.text}>Ok</Text>
-							</Pressable>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</Modal>
@@ -188,11 +190,12 @@ export default function Scan() {
 							<Ionicons name="arrow-undo-circle" size={100} color="orange" />
 							<Text style={styles.modalTitle}>Already Validated</Text>
 							<Text style={styles.modalText}>You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR</Text>
-							<Pressable
+							<TouchableOpacity
+								activeOpacity={0.8}
 								style={[styles.button, { backgroundColor: 'orange'}]}
 								onPress={() => setAlreadyValidatedModalVisible(!alreadyValidatedModalVisible)}>
 								<Text style={styles.text}>Ok</Text>
-							</Pressable>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</Modal>
@@ -211,11 +214,12 @@ export default function Scan() {
 							<Text style={styles.modalTitle}>Error</Text>
 							<Text style={styles.modalText}>You scanned an invalid qr code. The content is plausible, but the database does not contain it</Text>
 							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
-							<Pressable
+							<TouchableOpacity
+								activeOpacity={0.8}
 								style={[styles.button, { backgroundColor: 'red'}]}
 								onPress={() => setNotValidModalVisible(!notValidModalVisible)}>
 								<Text style={styles.text}>Ok</Text>
-							</Pressable>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</Modal>
@@ -236,11 +240,12 @@ export default function Scan() {
 							<Text style={styles.modalText}>You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account</Text>
 							<Text style={styles.modalText}>The qr code has <Text style={{fontWeight: 'bold'}}>not</Text> been marked as used</Text>
 							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
-							<Pressable
+							<TouchableOpacity
+								activeOpacity={0.8}
 								style={[styles.button, {backgroundColor: 'darkred'}]}
 								onPress={() => setOtherOrganizationModalVisible(!otherOrganizationModalVisible)}>
 								<Text style={styles.text}>Ok</Text>
-							</Pressable>
+							</TouchableOpacity>
 						</View>
 					</View>
 				</Modal>
