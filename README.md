@@ -52,25 +52,28 @@ Join our community of developers creating universal apps.
 
 Backend functions:
 
-CREATE OR REPLACE FUNCTION check_qr(qr_uuid UUID)
-RETURNS JSON
-AS $$
+CREATE OR REPLACE FUNCTION check_qr(qr_uuid UUID) RETURNS JSON
+    LANGUAGE plpgsql
+AS
+$$
 DECLARE
-  status TEXT := 'not_found';
-  qr_data RECORD;
-  user_organization_id UUID;
+    status TEXT := 'not_found';
+    qr_data RECORD;
+    user_organization_id UUID := get_user_organization();
 BEGIN
-  SELECT organization_id
-    INTO user_organization_id
-    FROM memberships
-    WHERE user_id = auth.uid();
+    IF user_organization_id IS NULL THEN
+      RAISE EXCEPTION 'The user is not in an organization';
+    END IF;
 
-  SELECT already_validated, text, organization_id
-    INTO qr_data
-    FROM public.qr
-    WHERE id = qr_uuid;
+    SELECT already_validated, text, organization_id
+      INTO qr_data
+      FROM public.qr
+      WHERE id = qr_uuid;
 
-  IF FOUND THEN
+    IF NOT FOUND THEN
+      RETURN to_jsonb(json_build_object('status', status));
+    END IF;
+
     IF user_organization_id != qr_data.organization_id THEN
       status := 'wrong_organization';
     ELSE
@@ -78,17 +81,61 @@ BEGIN
         status := 'already_validated';
       ELSE
         UPDATE public.qr
-          SET already_validated = true
+          SET already_validated = TRUE, validated_at = now()
           WHERE id = qr_uuid;
         status := 'ok';
       END IF;
     END IF;
-  END IF;
 
   RETURN to_jsonb(json_build_object('status', status));
+
 EXCEPTION
-  WHEN others THEN
+  WHEN OTHERS THEN
     RETURN to_jsonb(json_build_object('status', 'error', 'message', SQLERRM));
 END;
+$$;
+
+
+
+
+
+CREATE OR REPLACE FUNCTION add_qr()
+RETURNS uuid
+AS $$
+DECLARE
+  generated_uuid UUID;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'auth.uid() is NULL';
+  END IF;
+
+  generated_uuid := gen_random_uuid();
+  INSERT INTO public.qr (id, organization_id) VALUES (generated_uuid, get_user_organization());
+
+  RETURN generated_uuid;
+END;
 $$ LANGUAGE plpgsql;
+
+
+
+
+CREATE OR REPLACE FUNCTION get_user_organization()
+RETURNS uuid
+AS $$
+DECLARE
+  user_organization UUID;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'auth.uid() is NULL';
+  END IF;
+
+  SELECT organization_id
+    INTO user_organization
+    FROM public.memberships
+    WHERE (memberships.user_id = auth.uid());
+
+  RETURN user_organization;
+END;
+$$ LANGUAGE plpgsql;
+
 
