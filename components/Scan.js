@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Pressable, Modal, Animated } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Pressable, Modal, Animated, Vibration } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { validate as validateUUID } from 'uuid';
 import { supabase } from '../utils/supabase';
@@ -18,6 +18,20 @@ export default function Scan() {
 
 	const shakeAnimationValue = new Animated.Value(0);
 
+	const SCAM_PATTERN = [
+		5,
+		1 * 50,
+		5,
+		1 * 100,
+		5,
+		1 * 50,
+		5,
+		1 * 100,
+		5,
+		1 * 50,
+		1 * 500,
+	];
+
 	useEffect(() => {
 		const getCameraPermissions = async () => {
 		  const { status } = await Camera.requestCameraPermissionsAsync();
@@ -30,35 +44,35 @@ export default function Scan() {
 	useEffect(() => {
 		// Function to handle animation
 		const shakeIcon = () => {
-		  // Reset animation value
-		  shakeAnimationValue.setValue(0);
+			// Reset animation value
+			shakeAnimationValue.setValue(0);
 	
-		  // Shake animation sequence
-		  Animated.loop(
-			Animated.sequence([
-				Animated.timing(shakeAnimationValue, { toValue: 20, duration: 50, useNativeDriver: true }),
-				Animated.timing(shakeAnimationValue, { toValue: -20, duration: 100, useNativeDriver: true }),
-				Animated.timing(shakeAnimationValue, { toValue: 10, duration: 50, useNativeDriver: true }),
-				Animated.timing(shakeAnimationValue, { toValue: -10, duration: 100, useNativeDriver: true }),
-				Animated.timing(shakeAnimationValue, { toValue: 0, duration: 50, useNativeDriver: true }),
-				Animated.timing(shakeAnimationValue, { toValue: 0, duration: 500, useNativeDriver: true }),
-			])
-		  ).start()
+			// Shake animation sequence
+			Animated.loop(
+				Animated.sequence([
+					Animated.timing(shakeAnimationValue, { toValue: 20, duration: 50, useNativeDriver: true }),
+					Animated.timing(shakeAnimationValue, { toValue: -20, duration: 100, useNativeDriver: true }),
+					Animated.timing(shakeAnimationValue, { toValue: 10, duration: 50, useNativeDriver: true }),
+					Animated.timing(shakeAnimationValue, { toValue: -10, duration: 100, useNativeDriver: true }),
+					Animated.timing(shakeAnimationValue, { toValue: 0, duration: 50, useNativeDriver: true }),
+					Animated.timing(shakeAnimationValue, { toValue: 0, duration: 500, useNativeDriver: true }),
+				])
+			).start()
 		};
 	
 		// Start animation when scam modal becomes visible
 		if (scamModalVisible) {
 			shakeIcon();
 		} else {
-		// Stop animation and reset value when modal is hidden
-		shakeAnimationValue.setValue(0);
+			// Stop animation and reset value when modal is hidden
+			shakeAnimationValue.setValue(0);
 		}
 	  
 		// Cleanup animation on component unmount or modal hide
 		return () => {
-		shakeAnimationValue.setValue(0);
+			shakeAnimationValue.setValue(0);
 		};
-	  }, [scamModalVisible]);
+	}, [scamModalVisible]);
 
 	if (hasPermission === null) {
 		return <Text>Requesting for camera permission</Text>;
@@ -68,10 +82,12 @@ export default function Scan() {
 	}
 
 	const handleBarCodeScanned = async ({ type, data }) => {
+		Vibration.vibrate(100);
 		setScanned(true);
 		// Check if the scanned data is a valid UUID
 		if (!validateUUID(data)) {
 			setScamModalVisible(true);
+			Vibration.vibrate(SCAM_PATTERN, true);
 			return;
 		}
 		
@@ -95,7 +111,6 @@ export default function Scan() {
 				} else {
 					setNotValidModalVisible(true);
 				}
-				
 			}
 		} catch (error) {
 			console.error('Error fetching data from Supabase:', error.message);
@@ -119,6 +134,7 @@ export default function Scan() {
 					visible={scamModalVisible}
 					onRequestClose={() => {
 						setScamModalVisible(!scamModalVisible);
+						Vibration.cancel();
 					}}>
 					<View style={styles.centeredView}>
 						<View style={styles.modalView}>
@@ -130,7 +146,7 @@ export default function Scan() {
 							<Text style={styles.modalText}>Someone might have been notified about this error</Text>
 							<Pressable
 								style={[styles.button, { backgroundColor: 'red'}]}
-								onPress={() => setScamModalVisible(!scamModalVisible)}>
+								onPress={() => { setScamModalVisible(!scamModalVisible); Vibration.cancel() }}>
 								<Text style={styles.text}>Ok</Text>
 							</Pressable>
 						</View>
@@ -233,7 +249,7 @@ export default function Scan() {
 
 
 			<TouchableOpacity onPress={() => setScanned(false)} activeOpacity={0.8} style={[styles.button, { maxHeight: 250 }, scanned ? styles.buttonScanned : styles.buttonNotScanned]}>
-				 { scanned ? <Text style={ styles.text }>Scan again</Text> : <Text style={ styles.text }>Scan...</Text> }
+				{ scanned ? <Text style={ styles.text }>Scan again</Text> : <Text style={ styles.text }>Scan...</Text> }
 			</TouchableOpacity>
 
 		</View>
