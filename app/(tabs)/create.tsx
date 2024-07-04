@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { supabase } from '../../utils/supabase';
-import QRCode from 'react-native-qrcode-svg'; 
+import QRCode from 'react-native-qrcode-svg';
+
+// Custom styling
+import { Buttons } from '../../constants/Buttons';
 
 export default function Tab() {
   const [data, setData] = useState<{ uuid: string } | null>(null);
@@ -43,13 +46,13 @@ export default function Tab() {
         color="black"
         backgroundColor="white"
         />
-      ) : <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={styles.button}>
-          <Text style={ styles.buttonText }>Create a new qr code</Text>
+      ) : <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={Buttons.button}>
+          <Text style={ Buttons.buttonText }>Create a new qr code</Text>
         </TouchableOpacity>}
 
       {qrCreated && qrValue ? (
-        <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={[styles.button, { position: 'absolute', bottom:20 }]}>
-          <Text style={ styles.buttonText }>Create another qr code</Text>
+        <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={[Buttons.button, { position: 'absolute', bottom:20 }]}>
+          <Text style={ Buttons.buttonText }>Create another qr code</Text>
         </TouchableOpacity>
       ) : null }
 
@@ -62,21 +65,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'black',
-  },
-  buttonText: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
   },
 });

@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { supabase } from '../../utils/supabase';
-import { Session } from '@supabase/supabase-js'
+import { Session } from '@supabase/supabase-js';
+
+// Custom styling
+import { Buttons } from '../../constants/Buttons';
+import { Texts } from '../../constants/Texts';
+import { Inputs } from '@/constants/Inputs';
+
 
 export default function Tab() {
   const [session, setSession] = useState<Session | null>(null)
@@ -152,53 +158,53 @@ export default function Tab() {
   return (
     <View style={styles.container}>
       <View style={[styles.verticallySpaced]}>
-        <Text style={styles.text}>Email</Text>
+        <Text style={Texts.text}>Email</Text>
         <TextInput
           value={session?.user?.email}
           editable={false}
-          style={styles.input} />
+          style={Inputs.input} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.text}>Full Name</Text>
+        <Text style={Texts.text}>Full Name</Text>
         <TextInput
           value={fullName || ''}
           onChangeText={(text) => setFullName(text)}
-          style={styles.input} />
+          style={Inputs.input} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.text}>Organization UUID</Text>
+        <Text style={Texts.text}>Organization UUID</Text>
         <TextInput
           value={organizationUUID || ''}
           editable={false}
-          style={styles.input} />
+          style={Inputs.input} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Text style={styles.text}>Organization Name</Text>
+        <Text style={Texts.text}>Organization Name</Text>
         <TextInput
           value={organizationName || ''}
           editable={admin}
           onChangeText={(text) => setOrganizationName(text)}
-          style={styles.input} />
+          style={Inputs.input} />
       </View>
 
       <View style={[styles.verticallySpaced]}>
         <TouchableOpacity
           onPress={() => { updateProfile(); updateOrganization() }}
           disabled={loading}
-          style={styles.button}
+          style={Buttons.button}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}>{loading ? 'Loading ...' : 'Update'}</Text>
+          <Text style={Buttons.buttonText}>{loading ? 'Loading ...' : 'Update'}</Text>
         </TouchableOpacity>
       </View>
 
       <View style={styles.verticallySpaced}>
         <TouchableOpacity
           onPress={() => supabase.auth.signOut()}
-          style={[styles.button, {backgroundColor: 'red'}]}
+          style={[Buttons.button, {backgroundColor: 'red'}]}
           activeOpacity={0.8}
         >
-          <Text style={styles.buttonText}>Sign Out</Text>
+          <Text style={Buttons.buttonText}>Sign Out</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -214,35 +220,5 @@ const styles = StyleSheet.create({
     paddingTop: 4,
     paddingBottom: 4,
     alignSelf: 'stretch',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-    elevation: 3,
-    backgroundColor: 'black',
-  },
-  buttonText: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    letterSpacing: 0.25,
-    color: 'white',
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 21,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  input: {
-    height: 40,
-    marginVertical: 12,
-    borderRadius: 4,
-    elevation: 2,
-    paddingVertical: 12,
-    paddingHorizontal: 32,
   },
 });
