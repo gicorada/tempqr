@@ -120,10 +120,11 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION get_user_organization()
-RETURNS uuid
+RETURNS jsonb
 AS $$
 DECLARE
   user_organization UUID;
+  organization_info RECORD;
 BEGIN
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'auth.uid() is NULL';
@@ -134,8 +135,35 @@ BEGIN
     FROM public.memberships
     WHERE (memberships.user_id = auth.uid());
 
-  RETURN user_organization;
+  SELECT *
+    INTO organization_info
+    FROM public.organizations
+    WHERE (organizations.id = user_organization);
+
+  RETURN to_jsonb(json_build_object('id', organization_info.id, 'name', organization_info.name));
 END;
 $$ LANGUAGE plpgsql;
 
 
+
+
+
+CREATE OR REPLACE FUNCTION is_admin_user()
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  is_admin BOOLEAN;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'auth.uid() is NULL';
+  END IF;
+
+  SELECT is_admin
+  INTO is_admin
+  FROM public.memberships
+  WHERE user_id = auth.uid();
+
+  RETURN is_admin;
+END;
+$$;
