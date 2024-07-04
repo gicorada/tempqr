@@ -3,12 +3,13 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-nativ
 import { supabase } from '../../utils/supabase';
 import { Session } from '@supabase/supabase-js'
 
-// to fix
 export default function Tab() {
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
   const [fullName, setFullName] = useState('')
+  const [admin, setAdmin] = useState(false)
   const [organizationUUID, setOrganizationUUID] = useState('')
+  const [organizationName, setOrganizationName] = useState('')
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -17,7 +18,11 @@ export default function Tab() {
   }, [])
 
   useEffect(() => {
-    if (session) getProfile()
+    if (session) {
+      getProfile()
+      getAdminState()
+      getOrganization()
+    }
   }, [session])
 
   async function getProfile() {
@@ -34,11 +39,8 @@ export default function Tab() {
         throw error
       }
 
-      const { data: userOrg, error: errorOrg } = await supabase.rpc('get_user_organization', {})
-
-      if (data && userOrg) {
+      if (data) {
         setFullName(data.full_name)
-        setOrganizationUUID(userOrg)
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -49,7 +51,54 @@ export default function Tab() {
     }
   }
 
-  async function updateProfile(full_name: string) {
+  async function getOrganization() {
+    try {
+      setLoading(true)
+      if (!session?.user) throw new Error('No user on the session!')
+
+      const { data, error } = await supabase.rpc('get_user_organization', {})
+      if (error) {
+        throw error
+      }
+
+      if (data) {
+        setOrganizationUUID(data.id)
+        setOrganizationName(data.name)
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function getAdminState() {
+    try {
+      setLoading(true)
+      if (!session?.user) throw new Error('No user on the session!')
+
+      const { data, error } = await supabase.rpc('is_admin_user', {})
+      if (error) {
+        throw error
+      }
+
+      if (data) {
+        setAdmin(data)
+      }
+
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function updateProfile() {
     try {
       setLoading(true)
       if (!session?.user) throw new Error('No user on the session!')
@@ -57,10 +106,36 @@ export default function Tab() {
       const updates = {
         id: session?.user.id,
         updated_at: new Date(),
-        full_name: full_name
+        full_name: fullName
       }
 
       const { error } = await supabase.from('profiles').upsert(updates)
+
+      if (error) {
+        throw error
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // to fix
+  async function updateOrganization() {
+    try {
+      setLoading(true)
+      if (!session?.user) throw new Error('No user on the session!')
+
+      const updates = {
+        id: organizationUUID,
+        name: organizationName,
+        updated_at: new Date(),
+      }
+
+      const { error } = await supabase.from('organizations').update(updates)
 
       if (error) {
         throw error
@@ -97,10 +172,18 @@ export default function Tab() {
           editable={false}
           style={styles.input} />
       </View>
+      <View style={styles.verticallySpaced}>
+        <Text style={styles.text}>Organization Name</Text>
+        <TextInput
+          value={organizationName || ''}
+          editable={admin}
+          onChangeText={(text) => setOrganizationName(text)}
+          style={styles.input} />
+      </View>
 
       <View style={[styles.verticallySpaced]}>
         <TouchableOpacity
-          onPress={() => updateProfile(fullName)}
+          onPress={() => { updateProfile(); updateOrganization() }}
           disabled={loading}
           style={styles.button}
           activeOpacity={0.8}
