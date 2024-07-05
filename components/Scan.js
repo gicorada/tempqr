@@ -3,12 +3,10 @@ import { Text, View, StyleSheet, TouchableOpacity, Pressable, Modal, Animated, V
 import { CameraView, Camera } from "expo-camera";
 import { validate as validateUUID } from 'uuid';
 import { supabase } from '../utils/supabase';
-import { Ionicons } from '@expo/vector-icons';
+import ModalComponent from './ModalComponent';
 
 // Custom styling
 import { Buttons } from '../constants/Buttons';
-import { Modals } from '../constants/Modals';
-import { Texts } from '../constants/Texts';
 
 
 export default function Scan() {
@@ -23,19 +21,7 @@ export default function Scan() {
 
 	const shakeAnimationValue = new Animated.Value(0);
 
-	const SCAM_PATTERN = [
-		5,
-		1 * 50,
-		5,
-		1 * 100,
-		5,
-		1 * 50,
-		5,
-		1 * 100,
-		5,
-		1 * 50,
-		1 * 500,
-	];
+	const SCAM_PATTERN = [5, 50, 5, 100, 5, 50, 5, 100, 5, 50, 500];
 
 	useEffect(() => {
 		const getCameraPermissions = async () => {
@@ -46,39 +32,6 @@ export default function Scan() {
 		getCameraPermissions();
 	}, []);
 
-	useEffect(() => {
-		// Function to handle animation
-		const shakeIcon = () => {
-			// Reset animation value
-			shakeAnimationValue.setValue(0);
-	
-			// Shake animation sequence
-			Animated.loop(
-				Animated.sequence([
-					Animated.timing(shakeAnimationValue, { toValue: 20, duration: 50, useNativeDriver: true }),
-					Animated.timing(shakeAnimationValue, { toValue: -20, duration: 100, useNativeDriver: true }),
-					Animated.timing(shakeAnimationValue, { toValue: 10, duration: 50, useNativeDriver: true }),
-					Animated.timing(shakeAnimationValue, { toValue: -10, duration: 100, useNativeDriver: true }),
-					Animated.timing(shakeAnimationValue, { toValue: 0, duration: 50, useNativeDriver: true }),
-					Animated.timing(shakeAnimationValue, { toValue: 0, duration: 500, useNativeDriver: true }),
-				])
-			).start()
-		};
-	
-		// Start animation when scam modal becomes visible
-		if (scamModalVisible) {
-			shakeIcon();
-		} else {
-			// Stop animation and reset value when modal is hidden
-			shakeAnimationValue.setValue(0);
-		}
-	  
-		// Cleanup animation on component unmount or modal hide
-		return () => {
-			shakeAnimationValue.setValue(0);
-		};
-	}, [scamModalVisible]);
-
 	if (hasPermission === null) {
 		return <Text>Requesting for camera permission</Text>;
 	}
@@ -87,6 +40,8 @@ export default function Scan() {
 	}
 
 	const handleBarCodeScanned = async ({ type, data }) => {
+
+
 		Vibration.vibrate(100);
 		setScanned(true);
 		// Check if the scanned data is a valid UUID
@@ -137,152 +92,72 @@ export default function Scan() {
 			</TouchableOpacity>
 
 			<View>
-				{/* Scam */}
-				<Modal
-					animationType="slide"
-					transparent={true}
-					visible={scamModalVisible}
-					onRequestClose={() => {
-						setScamModalVisible(!scamModalVisible);
-						Vibration.cancel();
-					}}>
-					<View style={styles.centeredView}>
-						<View style={Modals.modalView}>
-							<Animated.View style={[styles.iconWrapper, { transform: [{ translateX: shakeAnimationValue }] }]}>
-								<Ionicons name="alert-circle" size={100} color="red" />
-							</Animated.View>
-							<Text style={Modals.modalTitle}>Possible scam attempt</Text>
-							<Text style={Modals.modalText}>You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt</Text>
-							<Text style={Modals.modalText}>Someone might have been notified about this error</Text>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								style={[Buttons.button, { backgroundColor: 'red'}]}
-								onPress={() => { setScamModalVisible(!scamModalVisible); Vibration.cancel() }}>
-								<Text style={Buttons.buttonText}>Ok</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</Modal>
+				{/* Modal Components */}
+        <ModalComponent
+        visible={scamModalVisible}
+        onClose={() => { setScamModalVisible(false); Vibration.cancel(); }}
+        icon="alert-circle"
+        title="Possible scam attempt"
+        text="You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt. Someone might have been notified about this error."
+        buttonColor="red"
+      />
 
-				{/* Success */}
-				<Modal
-					animationType="slide"
-					transparent={true}
-					visible={successModalVisible}
-					onRequestClose={() => {
-						setSuccessModalVisible(!successModalVisible);
-					}}>
-					<View style={styles.centeredView}>
-						<View style={Modals.modalView}>
-							<Ionicons name="checkmark-circle" size={100} color="green" />
-							<Text style={Modals.modalTitle}>Success</Text>
-							<Text style={Modals.modalText}>You scanned a valid QR code. The database has been notified and the qr has been marked as used</Text>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								style={[Buttons.button, { backgroundColor: 'green'}]}
-								onPress={() => setSuccessModalVisible(!successModalVisible)}>
-								<Text style={Buttons.buttonText}>Ok</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</Modal>
+      <ModalComponent
+        visible={successModalVisible}
+        onClose={() => setSuccessModalVisible(false)}
+        icon="checkmark-circle"
+        title="Success"
+        text="You scanned a valid QR code. The database has been notified and the qr has been marked as used."
+        buttonColor="green"
+      />
 
-				{/* Qr Code already validated */}
-				<Modal
-					animationType="slide"
-					transparent={true}
-					visible={alreadyValidatedModalVisible}
-					onRequestClose={() => {
-						setAlreadyValidatedModalVisible(!alreadyValidatedModalVisible);
-					}}>
-					<View style={styles.centeredView}>
-						<View style={Modals.modalView}>
-							<Ionicons name="arrow-undo-circle" size={100} color="orange" />
-							<Text style={Modals.modalTitle}>Already Validated</Text>
-							<Text style={Modals.modalText}>You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR</Text>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								style={[Buttons.button, { backgroundColor: 'orange'}]}
-								onPress={() => setAlreadyValidatedModalVisible(!alreadyValidatedModalVisible)}>
-								<Text style={Buttons.buttonText}>Ok</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</Modal>
+      <ModalComponent
+        visible={alreadyValidatedModalVisible}
+        onClose={() => setAlreadyValidatedModalVisible(false)}
+        icon="arrow-undo-circle"
+        title="Already Validated"
+        text="You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR."
+        buttonColor="orange"
+      />
 
-				{/* Qr Code not valid */}
-				<Modal
-					animationType="slide"
-					transparent={true}
-					visible={notValidModalVisible}
-					onRequestClose={() => {
-						setNotValidModalVisible(!notValidModalVisible);
-					}}>
-					<View style={styles.centeredView}>
-						<View style={Modals.modalView}>
-							<Ionicons name="close-circle" size={100} color="red" />
-							<Text style={Modals.modalTitle}>Error</Text>
-							<Text style={Modals.modalText}>You scanned an invalid qr code. The content is plausible, but the database does not contain it</Text>
-							<Text style={Modals.modalText}>Someone might have been notified about this error</Text>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								style={[Buttons.button, { backgroundColor: 'red'}]}
-								onPress={() => setNotValidModalVisible(!notValidModalVisible)}>
-								<Text style={Buttons.buttonText}>Ok</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</Modal>
+      <ModalComponent
+        visible={notValidModalVisible}
+        onClose={() => setNotValidModalVisible(false)}
+        icon="close-circle"
+        title="Error"
+        text="You scanned an invalid qr code. The content is plausible, but the database does not contain it. Someone might have been notified about this error."
+        buttonColor="red"
+      />
 
-
-				{/* Qr Code by another organization */}
-				<Modal
-					animationType="slide"
-					transparent={true}
-					visible={otherOrganizationModalVisible}
-					onRequestClose={() => {
-						setOtherOrganizationModalVisible(!otherOrganizationModalVisible);
-					}}>
-					<View style={styles.centeredView}>
-						<View style={Modals.modalView}>
-							<Ionicons name="business" size={100} color="darkred" />
-							<Text style={Modals.modalTitle}>Qr code not in your organization</Text>
-							<Text style={Modals.modalText}>You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account</Text>
-							<Text style={Modals.modalText}>The qr code has <Text style={{fontWeight: 'bold'}}>not</Text> been marked as used</Text>
-							<Text style={Modals.modalText}>Someone might have been notified about this error</Text>
-							<TouchableOpacity
-								activeOpacity={0.8}
-								style={[Buttons.button, {backgroundColor: 'darkred'}]}
-								onPress={() => setOtherOrganizationModalVisible(!otherOrganizationModalVisible)}>
-								<Text style={Buttons.buttonText}>Ok</Text>
-							</TouchableOpacity>
-						</View>
-					</View>
-				</Modal>
+      <ModalComponent
+        visible={otherOrganizationModalVisible}
+        onClose={() => setOtherOrganizationModalVisible(false)}
+        icon="business"
+        title="Qr code not in your organization"
+        text="You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account. The qr code has not been marked as used. Someone might have been notified about this error."
+        buttonColor="darkred"
+      />
 			</View>
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-  	container: {
-		flex: 1,
-		flexDirection: "column",
-		justifyContent: "center",
+  container: {
+  flex: 1,
+  flexDirection: "column",
+  justifyContent: "center",
  	},
-  	centeredView: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginTop: 22,
+  centeredView: {
+  flex: 1,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: 22,
 	},
 	buttonScanned: {
 		backgroundColor: 'blue',
 	},
 	buttonNotScanned: {
 		backgroundColor: 'red',
-	},
-	iconWrapper: {
-		marginBottom: 20,
 	},
 });
