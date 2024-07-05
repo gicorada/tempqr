@@ -92,51 +92,56 @@ export default function Scan() {
 			</TouchableOpacity>
 
 			<View>
-				{/* Modal Components */}
+        {/* Modal Components */}
         <ModalComponent
-        visible={scamModalVisible}
-        onClose={() => { setScamModalVisible(false); Vibration.cancel(); }}
-        icon="alert-circle"
-        title="Possible scam attempt"
-        text="You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt. Someone might have been notified about this error."
-        buttonColor="red"
-      />
+          visible={scamModalVisible}
+          onClose={() => { setScamModalVisible(false); Vibration.cancel(); }}
+          icon="alert-circle"
+          animateIcon={true}
+          title="Possible scam attempt"
+          text="You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt. Someone might have been notified about this error."
+          buttonColor="red"
+        />
 
-      <ModalComponent
-        visible={successModalVisible}
-        onClose={() => setSuccessModalVisible(false)}
-        icon="checkmark-circle"
-        title="Success"
-        text="You scanned a valid QR code. The database has been notified and the qr has been marked as used."
-        buttonColor="green"
-      />
+        <ModalComponent
+          visible={successModalVisible}
+          onClose={() => setSuccessModalVisible(false)}
+          icon="checkmark-circle"
+          animateIcon={false}
+          title="Success"
+          text="You scanned a valid QR code. The database has been notified and the qr has been marked as used."
+          buttonColor="green"
+        />
 
-      <ModalComponent
-        visible={alreadyValidatedModalVisible}
-        onClose={() => setAlreadyValidatedModalVisible(false)}
-        icon="arrow-undo-circle"
-        title="Already Validated"
-        text="You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR."
-        buttonColor="orange"
-      />
+        <ModalComponent
+          visible={alreadyValidatedModalVisible}
+          onClose={() => setAlreadyValidatedModalVisible(false)}
+          icon="arrow-undo-circle"
+          animateIcon={false}
+          title="Already Validated"
+          text="You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR."
+          buttonColor="orange"
+        />
 
-      <ModalComponent
-        visible={notValidModalVisible}
-        onClose={() => setNotValidModalVisible(false)}
-        icon="close-circle"
-        title="Error"
-        text="You scanned an invalid qr code. The content is plausible, but the database does not contain it. Someone might have been notified about this error."
-        buttonColor="red"
-      />
+        <ModalComponent
+          visible={notValidModalVisible}
+          onClose={() => setNotValidModalVisible(false)}
+          icon="close-circle"
+          animateIcon={false}
+          title="Error"
+          text="You scanned an invalid qr code. The content is plausible, but the database does not contain it. Someone might have been notified about this error."
+          buttonColor="red"
+        />
 
-      <ModalComponent
-        visible={otherOrganizationModalVisible}
-        onClose={() => setOtherOrganizationModalVisible(false)}
-        icon="business"
-        title="Qr code not in your organization"
-        text="You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account. The qr code has not been marked as used. Someone might have been notified about this error."
-        buttonColor="darkred"
-      />
+        <ModalComponent
+          visible={otherOrganizationModalVisible}
+          onClose={() => setOtherOrganizationModalVisible(false)}
+          icon="business"
+          animateIcon={false}
+          title="Qr code not in your organization"
+          text="You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account. The qr code has not been marked as used. Someone might have been notified about this error."
+          buttonColor="darkred"
+        />
 			</View>
 		</View>
 	);
@@ -144,15 +149,15 @@ export default function Scan() {
 
 const styles = StyleSheet.create({
   container: {
-  flex: 1,
-  flexDirection: "column",
-  justifyContent: "center",
+    flex: 1,
+    flexDirection: "column",
+    justifyContent: "center",
  	},
   centeredView: {
-  flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginTop: 22,
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
 	},
 	buttonScanned: {
 		backgroundColor: 'blue',

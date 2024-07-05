@@ -7,15 +7,18 @@ interface ModalComponentProps {
   visible: boolean;
   onClose: () => void;
   icon?: string;
+  animateIcon?: boolean;
   title: string;
   text: string;
   buttonColor: string;
 }
 
-const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, icon, title, text, buttonColor }) => {
+const ModalComponent: React.FC<ModalComponentProps> = ({ visible, onClose, icon, animateIcon, title, text, buttonColor }) => {
   const shakeAnimationValue = new Animated.Value(0);
 
   useEffect(() => {
+    if (!animateIcon) return;
+
     const shakeIcon = () => {
       shakeAnimationValue.setValue(0);
       Animated.loop(

@@ -1,5 +1,6 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+
 
 export default function TabLayout() {
   return (
@@ -8,21 +9,21 @@ export default function TabLayout() {
         name="home"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="home" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons name={'home'} size={28} color={color} />,
         }}
       />
       <Tabs.Screen
         name="create"
         options={{
           title: 'Create',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="qr-code" color={color} />,
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="cog" color={color} />,
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="cog" color={color} />,
         }}
       />
     </Tabs>
