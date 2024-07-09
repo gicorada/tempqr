@@ -3,6 +3,9 @@ import { Alert, StyleSheet, View, AppState, TouchableOpacity, Text } from 'react
 import { supabase } from '../../utils/supabase'
 import { Input } from '@rneui/themed'
 
+// import hook
+import { useTranslation } from "react-i18next";
+
 import { Buttons } from '../../constants/Buttons';
 
 // Tells Supabase Auth to continuously refresh the session automatically if
@@ -21,6 +24,7 @@ export default function Auth() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const { t } = useTranslation();
 
   async function signInWithEmail() {
     setLoading(true)
@@ -52,7 +56,7 @@ export default function Auth() {
     <View style={styles.container}>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <Input
-          label="Email"
+          label={t('login.email')}
           leftIcon={{ type: 'font-awesome', name: 'envelope' }}
           onChangeText={(text) => setEmail(text)}
           value={email}
@@ -62,7 +66,7 @@ export default function Auth() {
       </View>
       <View style={styles.verticallySpaced}>
         <Input
-          label="Password"
+          label={t('login.password')}
           leftIcon={{ type: 'font-awesome', name: 'lock' }}
           onChangeText={(text) => setPassword(text)}
           value={password}
@@ -73,12 +77,12 @@ export default function Auth() {
       </View>
       <View style={[styles.verticallySpaced, styles.mt20]}>
         <TouchableOpacity activeOpacity={0.8} style={[Buttons.button, {backgroundColor: 'blue'}]} disabled={loading} onPress={() => signInWithEmail()}>
-          <Text style={Buttons.buttonText}>Sign in</Text>
+          <Text style={Buttons.buttonText}>{t('login.signIn')}</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.verticallySpaced}>
         <TouchableOpacity activeOpacity={0.8} style={[Buttons.button, {backgroundColor: 'darkblue'}]} disabled={loading} onPress={() => signUpWithEmail()}>
-          <Text style={Buttons.buttonText}>Sign up</Text>
+          <Text style={Buttons.buttonText}>{t('login.signUp')}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -4,9 +4,9 @@ export const Inputs = StyleSheet.create({
 	input: {
 		height: 40,
 		marginVertical: 12,
+		borderWidth: 0.5,
 		borderRadius: 4,
-		elevation: 2,
 		paddingVertical: 12,
-		paddingHorizontal: 32,
+		paddingHorizontal: 15,
 	  },
 });

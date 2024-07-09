@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { supabase } from '../../utils/supabase';
 import { Session } from '@supabase/supabase-js';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Dropdown } from 'react-native-element-dropdown'
+
+// import hook
+import { useTranslation } from "react-i18next";
 
 // Custom styling
 import { Buttons } from '../../constants/Buttons';
@@ -16,6 +21,24 @@ export default function Tab() {
   const [admin, setAdmin] = useState(false)
   const [organizationUUID, setOrganizationUUID] = useState('')
   const [organizationName, setOrganizationName] = useState('')
+  const { i18n, t } = useTranslation();
+  const currentLanguage = i18n.language;
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const savedLanguage = await AsyncStorage.getItem("language");
+      if (savedLanguage) {
+        i18n.changeLanguage(savedLanguage);
+      }
+    };
+    loadLanguage();
+  }, [i18n]);
+
+  const changeLanguage = async (lang: string) => {
+    await AsyncStorage.setItem("language", lang);
+    i18n.changeLanguage(lang);
+  };
+
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -158,33 +181,44 @@ export default function Tab() {
   return (
     <View style={styles.container}>
       <View style={[styles.verticallySpaced]}>
-        <Text style={Texts.text}>Email</Text>
+        <Text style={Texts.text}>{t('settings.email')}</Text>
         <TextInput
           value={session?.user?.email}
           editable={false}
           style={Inputs.input} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Text style={Texts.text}>Full Name</Text>
+        <Text style={Texts.text}>{t('settings.fullName')}</Text>
         <TextInput
           value={fullName || ''}
           onChangeText={(text) => setFullName(text)}
           style={Inputs.input} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Text style={Texts.text}>Organization UUID</Text>
+        <Text style={Texts.text}>{t('settings.organizationUUID')}</Text>
         <TextInput
           value={organizationUUID || ''}
           editable={false}
           style={Inputs.input} />
       </View>
       <View style={styles.verticallySpaced}>
-        <Text style={Texts.text}>Organization Name</Text>
+        <Text style={Texts.text}>{t('settings.organizationName')}</Text>
         <TextInput
           value={organizationName || ''}
           editable={admin}
           onChangeText={(text) => setOrganizationName(text)}
           style={Inputs.input} />
+      </View>
+
+      <View style={styles.verticallySpaced}>
+        <Text style={Texts.text}>{t('language')}</Text>
+        <Dropdown
+          data={[{ label: 'English', value: 'en-US' }, { label: 'Italiano (Italian)', value: 'it-IT' }]}
+          value={i18n.language}
+          onChange={(value) => changeLanguage(value.value)}
+          labelField={'label'} valueField={'value'}
+          style={[Inputs.input]}
+          />          
       </View>
 
       <View style={[styles.verticallySpaced]}>
@@ -194,7 +228,7 @@ export default function Tab() {
           style={Buttons.button}
           activeOpacity={0.8}
         >
-          <Text style={Buttons.buttonText}>{loading ? 'Loading ...' : 'Update'}</Text>
+          <Text style={Buttons.buttonText}>{loading ? t('settings.loading') : t('settings.update')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -204,7 +238,7 @@ export default function Tab() {
           style={[Buttons.button, {backgroundColor: 'red'}]}
           activeOpacity={0.8}
         >
-          <Text style={Buttons.buttonText}>Sign Out</Text>
+          <Text style={Buttons.buttonText}>{t('settings.signOut')}</Text>
         </TouchableOpacity>
       </View>
     </View>
