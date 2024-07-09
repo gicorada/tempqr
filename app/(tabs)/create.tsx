@@ -27,9 +27,6 @@ export default function Tab() {
       if (error) {
         throw error;
       } else {
-        console.log('Data from Supabase:', supabaseData);
-        alert(supabaseData);
-
         setQrCreated(true);
         setQRValue(supabaseData);
       }

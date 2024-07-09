@@ -44,8 +44,6 @@ export default function Scan() {
 	}
 
 	const handleBarCodeScanned = async ({ type, data }) => {
-
-
 		Vibration.vibrate(100);
 		setScanned(true);
 		// Check if the scanned data is a valid UUID
@@ -54,9 +52,7 @@ export default function Scan() {
 			Vibration.vibrate(SCAM_PATTERN, true);
 			return;
 		}
-		
-		console.log("the qr contains an uuid, checking...");
-		
+				
 		try {
 			const { data: supabaseData, error } = await supabase.rpc('check_qr', {qr_uuid: data})
 			
@@ -64,7 +60,6 @@ export default function Scan() {
 				throw error;
 			} else {
 				setData(supabaseData);
-				console.log(supabaseData);
 
 				if(supabaseData.status === 'ok') {
 					setSuccessModalVisible(true);
