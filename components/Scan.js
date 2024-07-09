@@ -5,6 +5,9 @@ import { validate as validateUUID } from 'uuid';
 import { supabase } from '../utils/supabase';
 import ModalComponent from './ModalComponent';
 
+// import hook
+import { useTranslation } from "react-i18next";
+
 // Custom styling
 import { Buttons } from '../constants/Buttons';
 
@@ -17,7 +20,8 @@ export default function Scan() {
 	const [successModalVisible, setSuccessModalVisible] = useState(false);
 	const [alreadyValidatedModalVisible, setAlreadyValidatedModalVisible] = useState(false);
 	const [notValidModalVisible, setNotValidModalVisible] = useState(false);
-	const [otherOrganizationModalVisible, setOtherOrganizationModalVisible] = useState(false);
+	const [otherOrganizationModalVisible, setOtherOrganizationModalVisible] = useState(false); 
+	const { t } = useTranslation();
 
 	const shakeAnimationValue = new Animated.Value(0);
 
@@ -33,10 +37,10 @@ export default function Scan() {
 	}, []);
 
 	if (hasPermission === null) {
-		return <Text>Requesting for camera permission</Text>;
+		return <Text>{t('scan.cameraPermissionRequest')}</Text>;
 	}
 	if (hasPermission === false) {
-		return <Text>No access to camera</Text>;
+		return <Text>{t('scan.noCameraPermission')}</Text>;
 	}
 
 	const handleBarCodeScanned = async ({ type, data }) => {
@@ -88,7 +92,7 @@ export default function Scan() {
 			/>
 
 			<TouchableOpacity onPress={() => setScanned(false)} activeOpacity={0.8} style={[Buttons.button, { maxHeight: 250 }, scanned ? styles.buttonScanned : styles.buttonNotScanned]}>
-				{ scanned ? <Text style={ Buttons.buttonText }>Scan again</Text> : <Text style={ Buttons.buttonText }>Scan...</Text> }
+				{ scanned ? <Text style={ Buttons.buttonText }>{t('scan.scanAgain')}</Text> : <Text style={ Buttons.buttonText }>{t('scan.scanning')}.</Text> }
 			</TouchableOpacity>
 
 			<View>
@@ -98,8 +102,8 @@ export default function Scan() {
           onClose={() => { setScamModalVisible(false); Vibration.cancel(); }}
           icon="alert-circle"
           animateIcon={true}
-          title="Possible scam attempt"
-          text="You scanned a QR code which is not by Tempqr. Please be cautious as this might be a scam attempt. Someone might have been notified about this error."
+          title={t('scan.modals.scam.title')}
+          text={t('scan.modals.scam.description')}
           buttonColor="red"
         />
 
@@ -108,8 +112,8 @@ export default function Scan() {
           onClose={() => setSuccessModalVisible(false)}
           icon="checkmark-circle"
           animateIcon={false}
-          title="Success"
-          text="You scanned a valid QR code. The database has been notified and the qr has been marked as used."
+          title={t('scan.modals.success.title')}
+          text={t('scan.modals.success.description')}
           buttonColor="green"
         />
 
@@ -118,8 +122,8 @@ export default function Scan() {
           onClose={() => setAlreadyValidatedModalVisible(false)}
           icon="arrow-undo-circle"
           animateIcon={false}
-          title="Already Validated"
-          text="You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR."
+          title={t('scan.modals.alreadyValidated.title')}
+          text={t('scan.modals.alreadyValidated.description')}
           buttonColor="orange"
         />
 
@@ -128,8 +132,8 @@ export default function Scan() {
           onClose={() => setNotValidModalVisible(false)}
           icon="close-circle"
           animateIcon={false}
-          title="Error"
-          text="You scanned an invalid qr code. The content is plausible, but the database does not contain it. Someone might have been notified about this error."
+          title={t('scan.modals.error.title')}
+          text={t('scan.modals.error.description')}
           buttonColor="red"
         />
 
@@ -138,8 +142,8 @@ export default function Scan() {
           onClose={() => setOtherOrganizationModalVisible(false)}
           icon="business"
           animateIcon={false}
-          title="Qr code not in your organization"
-          text="You scanned a valid qr code, but it's not in your organization. Try again with another TempQr account. The qr code has not been marked as used. Someone might have been notified about this error."
+          title={t('scan.modals.otherOrganization.title')}
+          text={t('scan.modals.otherOrganization.description')}
           buttonColor="darkred"
         />
 			</View>

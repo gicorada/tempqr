@@ -3,6 +3,9 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import { supabase } from '../../utils/supabase';
 import QRCode from 'react-native-qrcode-svg';
 
+// import hook
+import { useTranslation } from "react-i18next";
+
 // Custom styling
 import { Buttons } from '../../constants/Buttons';
 
@@ -11,6 +14,7 @@ export default function Tab() {
   const [qrCreated, setQrCreated] = useState(false);
   const [qrValue, setQRValue] = useState< string | null>(null); 
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const createQRCode = async () => {
     if (isLoading) return;
@@ -24,7 +28,7 @@ export default function Tab() {
         throw error;
       } else {
         console.log('Data from Supabase:', supabaseData);
-        alert(`QR code created with uuid ${supabaseData}`);
+        alert(supabaseData);
 
         setQrCreated(true);
         setQRValue(supabaseData);
@@ -47,12 +51,12 @@ export default function Tab() {
         backgroundColor="white"
         />
       ) : <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={Buttons.button}>
-          <Text style={ Buttons.buttonText }>Create a new qr code</Text>
+          <Text style={ Buttons.buttonText }>{t('create.newQR')}</Text>
         </TouchableOpacity>}
 
       {qrCreated && qrValue ? (
         <TouchableOpacity activeOpacity={0.8} onPress={createQRCode} disabled={isLoading} style={[Buttons.button, { position: 'absolute', bottom:20 }]}>
-          <Text style={ Buttons.buttonText }>Create another qr code</Text>
+          <Text style={ Buttons.buttonText }>{t('create.anotherQR')}</Text>
         </TouchableOpacity>
       ) : null }
 
