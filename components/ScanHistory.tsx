@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Pressable, Vibration, Platform, ToastAndroid, Alert } from 'react-native';
 import { supabase } from '../utils/supabase';
 import { useTranslation } from 'react-i18next';
 import { Texts } from '@/constants/Texts';
+import * as Clipboard from 'expo-clipboard';
+import Toast from 'react-native-simple-toast';
 
 export default function ScanHistory() {
   const [scans, setScans] = useState();
@@ -22,24 +24,33 @@ export default function ScanHistory() {
     fetchScanHistory();
   }, []);
 
+  const copyToClipboard = async (id: string) => {
+    await Clipboard.setStringAsync(id);
+    Vibration.vibrate(200);
+
+    Toast.show(t('scanHistory.idCopy') + ' ' + id, Toast.SHORT);
+  };
+
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.item}>
-      <Text style={Texts.text}>
-		    <Text style={Texts.bold}>{t('scanHistory.id')} </Text>
-		    {item.id}
-		  </Text>
-
-      {item.text ?
+      <Pressable onLongPress={() => copyToClipboard(item.id)}>
         <Text style={Texts.text}>
-          <Text style={Texts.bold}>{t('scanHistory.text')} </Text>
-          {item.text}
+          <Text style={Texts.bold}>{t('scanHistory.id')} </Text>
+          {item.id}
         </Text>
-        : null}
 
-      <Text style={Texts.text}>
-        <Text style={Texts.bold}>{t('scanHistory.date')} </Text>
-        {new Date(item.validated_at).toLocaleString()}
-      </Text>
+        {item.text ?
+          <Text style={Texts.text}>
+            <Text style={Texts.bold}>{t('scanHistory.text')} </Text>
+            {item.text}
+          </Text>
+          : null}
+
+        <Text style={Texts.text}>
+          <Text style={Texts.bold}>{t('scanHistory.date')} </Text>
+          {new Date(item.validated_at).toLocaleString()}
+        </Text>
+      </Pressable>
     </View>
   );
 
@@ -57,11 +68,11 @@ export default function ScanHistory() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    padding: 15,
   },
   item: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    padding: 15,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'black',
   },
 });

@@ -49,7 +49,8 @@
 		"title": "Scan History",
 		"id": "ID:",
 		"date": "Validation Date:",
-		"text": "Text:"
+		"text": "Text:",
+		"idCopy": "ID copied"
 	},
 	"login": {
 		"title": "Login",
