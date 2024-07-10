@@ -42,7 +42,14 @@
 		"organizationName": "Organization Name",
 		"loading": "Loading...",
 		"update": "Update",
-		"signOut": "Sign out"
+		"signOut": "Sign out",
+		"scanHistory": "Scan History"
+	},
+	"scanHistory": {
+		"title": "Scan History",
+		"id": "ID:",
+		"date": "Validation Date:",
+		"text": "Text:"
 	},
 	"login": {
 		"title": "Login",

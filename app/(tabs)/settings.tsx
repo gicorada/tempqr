@@ -4,6 +4,7 @@ import { supabase } from '../../utils/supabase';
 import { Session } from '@supabase/supabase-js';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Dropdown } from 'react-native-element-dropdown'
+import { StackActions, useNavigation } from '@react-navigation/native';
 
 // import hook
 import { useTranslation } from "react-i18next";
@@ -23,6 +24,7 @@ export default function Tab() {
   const [organizationName, setOrganizationName] = useState('')
   const { i18n, t } = useTranslation();
   const currentLanguage = i18n.language;
+  const navigation = useNavigation();
 
   useEffect(() => {
     const loadLanguage = async () => {
@@ -241,13 +243,22 @@ export default function Tab() {
           <Text style={Buttons.buttonText}>{t('settings.signOut')}</Text>
         </TouchableOpacity>
       </View>
+
+      <View style={styles.verticallySpaced}>
+        <TouchableOpacity
+          onPress={() => navigation.dispatch(StackActions.push('ScanHistory'))}
+          style={[Buttons.button]}
+          activeOpacity={0.8}
+        >
+          <Text style={Buttons.buttonText}>{t('settings.scanHistory')}</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 40,
     padding: 12,
   },
   verticallySpaced: {

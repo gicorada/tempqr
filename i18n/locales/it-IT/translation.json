@@ -42,7 +42,14 @@
 		"organizationName": "Nome dell'organizzazione",
 		"loading": "Caricamento...",
 		"update": "Aggiorna",
-		"signOut": "Esci"
+		"signOut": "Esci",
+		"scanHistory": "Storico delle scansioni"
+	},
+	"scanHistory": {
+		"title": "Storico delle scansioni",
+		"id": "ID:",
+		"date": "Data di validazione:",
+		"text": "Testo:"
 	},
 	"login": {
 		"title": "Login",

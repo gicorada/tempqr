@@ -4,7 +4,10 @@ export const Texts = StyleSheet.create({
   text: {
     fontSize: 16,
     lineHeight: 21,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: 'black',
   },
+  bold: {
+    fontWeight: 'bold',
+  }
 });
