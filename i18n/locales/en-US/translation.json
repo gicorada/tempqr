@@ -26,6 +26,10 @@
 			"otherOrganization": {
 				"title": "QR code not in your organization",
 				"description": "You scanned a valid QR code, but it's not in your organization. Try again with another TempQR account. The QR code has not been marked as used. Someone might have been notified about this error."
+			},
+			"noInternet": {
+				"title": "No Internet Connection",
+				"description": "You don't have an internet connection. Please connect to the internet to scan a QR code."
 			}
 	  	}
 	},

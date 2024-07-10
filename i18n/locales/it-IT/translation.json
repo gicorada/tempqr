@@ -26,6 +26,10 @@
 			"otherOrganization": {
 				"title": "QR code non nella tua organizzazione",
 				"description": "Hai scansionato un codice QR valido, ma non è presente nella tua organizzazione. Riprova con un altro account TempQR. Il codice QR non è stato contrassegnato come utilizzato. Qualcuno potrebbe essere stato informato di questo errore."
+			},
+			"noInternet": {
+				"title": "Nessuna connessione Internet",
+				"description": "Non hai una connessione internet. Connettiti a internet per scansionare un codice QR."
 			}
 	  	}
 	},

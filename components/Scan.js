@@ -20,7 +20,8 @@ export default function Scan() {
 	const [successModalVisible, setSuccessModalVisible] = useState(false);
 	const [alreadyValidatedModalVisible, setAlreadyValidatedModalVisible] = useState(false);
 	const [notValidModalVisible, setNotValidModalVisible] = useState(false);
-	const [otherOrganizationModalVisible, setOtherOrganizationModalVisible] = useState(false); 
+	const [otherOrganizationModalVisible, setOtherOrganizationModalVisible] = useState(false);
+  const [noInternetModalVisible, setNoInternetModalVisible] = useState(false);
 	const { t } = useTranslation();
 
 	const shakeAnimationValue = new Animated.Value(0);
@@ -72,6 +73,9 @@ export default function Scan() {
 				}
 			}
 		} catch (error) {
+      if(error.message === 'TypeError: Network request failed') {
+        setNoInternetModalVisible(true);
+      }
 			console.error('Error fetching data from Supabase:', error.message);
 		}
 	};
@@ -140,6 +144,16 @@ export default function Scan() {
           title={t('scan.modals.otherOrganization.title')}
           text={t('scan.modals.otherOrganization.description')}
           buttonColor="darkred"
+        />
+
+        <ModalComponent
+          visible={noInternetModalVisible}
+          onClose={() => setNoInternetModalVisible(false)}
+          icon="wifi"
+          animateIcon={false}
+          title={t('scan.modals.otherOrganization.title')}
+          text={t('scan.modals.otherOrganization.description')}
+          buttonColor="grey"
         />
 			</View>
 		</View>
