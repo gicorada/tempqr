@@ -54,7 +54,8 @@
 		"id": "ID:",
 		"date": "Validation Date:",
 		"text": "Text:",
-		"idCopy": "ID copied"
+		"idCopy": "ID copied",
+		"noHistory": "No scan history"
 	},
 	"login": {
 		"title": "Login",

@@ -56,11 +56,11 @@ export default function ScanHistory() {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      {scans ? <FlatList
         data={scans}
         renderItem={renderItem}
         keyExtractor={item => item.id.toString()}
-      />
+      /> : <Text style={[Texts.text, {textAlign: 'center', fontWeight: "bold"}]}>{t('scanHistory.noHistory')}</Text> }
     </View>
   );
 }
