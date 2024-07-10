@@ -52,14 +52,14 @@ Join our community of developers creating universal apps.
 
 Backend functions:
 
-CREATE OR REPLACE FUNCTION check_qr(qr_uuid UUID) RETURNS JSON
-    LANGUAGE plpgsql
-AS
+create function check_qr(qr_uuid uuid) returns json
+    language plpgsql
+as
 $$
 DECLARE
     status TEXT := 'not_found';
     qr_data RECORD;
-    user_organization_id UUID := get_user_organization();
+    user_organization_id UUID := get_user_organization()->>'id';
 BEGIN
     IF user_organization_id IS NULL THEN
       RAISE EXCEPTION 'The user is not in an organization';
@@ -81,7 +81,7 @@ BEGIN
         status := 'already_validated';
       ELSE
         UPDATE public.qr
-          SET already_validated = TRUE, validated_at = now()
+          SET already_validated = TRUE, validated_at = now(), validated_by = auth.uid()
           WHERE id = qr_uuid;
         status := 'ok';
       END IF;
@@ -165,5 +165,33 @@ BEGIN
   WHERE user_id = auth.uid();
 
   RETURN is_admin;
+END;
+$$;
+
+
+
+
+create function validated_by_user() returns json
+    language plpgsql
+as
+$$
+DECLARE
+    result JSON;
+BEGIN
+    IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'auth.uid() is NULL';
+    END IF;
+
+    result := (
+        SELECT jsonb_agg(jsonb_build_object('id', id, 'text', text, 'validated_at', validated_at))
+        FROM public.qr
+        WHERE auth.uid() = validated_by
+    );
+
+  RETURN result;
+
+EXCEPTION
+  WHEN OTHERS THEN
+    RETURN to_jsonb(json_build_object('status', 'error', 'message', SQLERRM));
 END;
 $$;
