@@ -33,6 +33,8 @@ When you get them, put them in the gitignored file .env.local in the root of the
 
 Backend functions:
 
+CHECK_QR(UUID)
+```sql
 create function check_qr(qr_uuid uuid) returns json
     language plpgsql
 as
@@ -46,7 +48,7 @@ BEGIN
       RAISE EXCEPTION 'The user is not in an organization';
     END IF;
 
-    SELECT already_validated, text, organization_id
+    SELECT already_validated, qr_text, organization_id
       INTO qr_data
       FROM public.qr
       WHERE id = qr_uuid;
@@ -68,21 +70,21 @@ BEGIN
       END IF;
     END IF;
 
-  RETURN to_jsonb(json_build_object('status', status));
+  RETURN to_jsonb(json_build_object('status', status, 'text', qr_data.qr_text));
 
 EXCEPTION
   WHEN OTHERS THEN
     RETURN to_jsonb(json_build_object('status', 'error', 'message', SQLERRM));
 END;
 $$;
+```
 
-
-
-
-
-CREATE OR REPLACE FUNCTION add_qr()
-RETURNS uuid
-AS $$
+ADD_QR(TEXT)
+```sql
+create function add_qr(user_text text) returns uuid
+    language plpgsql
+as
+$$
 DECLARE
   generated_uuid UUID;
 BEGIN
@@ -91,18 +93,19 @@ BEGIN
   END IF;
 
   generated_uuid := gen_random_uuid();
-  INSERT INTO public.qr (id, organization_id) VALUES (generated_uuid, get_user_organization());
+  INSERT INTO public.qr (id, organization_id, qr_text) VALUES (generated_uuid, (get_user_organization()->>'id')::uuid, user_text);
 
   RETURN generated_uuid;
 END;
-$$ LANGUAGE plpgsql;
+$$;
+```
 
-
-
-
-CREATE OR REPLACE FUNCTION get_user_organization()
-RETURNS jsonb
-AS $$
+GET_USER_ORGANIZATION()
+```sql
+create function get_user_organization() returns jsonb
+    language plpgsql
+as
+$$
 DECLARE
   user_organization UUID;
   organization_info RECORD;
@@ -123,35 +126,34 @@ BEGIN
 
   RETURN to_jsonb(json_build_object('id', organization_info.id, 'name', organization_info.name));
 END;
-$$ LANGUAGE plpgsql;
+$$;
+```
 
-
-
-
-
-CREATE OR REPLACE FUNCTION is_admin_user()
-RETURNS BOOLEAN
-LANGUAGE plpgsql
-AS $$
+IS_ADMIN_USER()
+```sql
+create function is_admin_user() returns boolean
+    language plpgsql
+as
+$$
 DECLARE
-  is_admin BOOLEAN;
+  status BOOLEAN;
 BEGIN
   IF auth.uid() IS NULL THEN
     RAISE EXCEPTION 'auth.uid() is NULL';
   END IF;
 
   SELECT is_admin
-  INTO is_admin
+  INTO status
   FROM public.memberships
   WHERE user_id = auth.uid();
 
-  RETURN is_admin;
+  RETURN status;
 END;
 $$;
+```
 
-
-
-
+VALIDATED_BY_USER()
+```sql
 create function validated_by_user() returns json
     language plpgsql
 as
@@ -176,3 +178,4 @@ EXCEPTION
     RETURN to_jsonb(json_build_object('status', 'error', 'message', SQLERRM));
 END;
 $$;
+```
