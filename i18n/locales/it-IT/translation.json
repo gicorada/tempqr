@@ -1,67 +1,68 @@
 {
-	"language": "Lingua",
-	"scan": {
-		"title": "Scansiona",
-		"cameraPermissionRequest": "Chiedendo i permessi per la fotocamera",
-		"noCameraPermission": "Nessun accesso alla fotocamera",
-		"scanAgain": "Scansiona di nuovo",
-		"scanning": "Scansionando...",
-		"modals": {
-			"scam": {
-				"title": "Possibile tentativo di scam",
-				"description": "Hai scansionato un codice QR che non è di TempQR. Fai attenzione perché potrebbe trattarsi di un tentativo di truffa. Qualcuno potrebbe essere stato informato di questo errore."
-			},
-			"success": {
-				"title": "Successo",
-				"description": "Hai scansionato un codice QR valido. Il codice QR è stato contrassegnato come utilizzato nel nostro database."
-			},
-			"alreadyValidated": {
-				"title": "Già convalidato",
-				"description": "Hai scansionato un codice QR già scansionato. Questo può essere positivo o negativo a seconda della tua implementazione di TempQR."
-			},
-			"error": {
-				"title": "Errore",
-				"description": "Hai scansionato un codice QR non valido. Il contenuto è plausibile, ma il database non lo contiene. Qualcuno potrebbe essere stato informato di questo errore."
-			},
-			"otherOrganization": {
-				"title": "QR code non nella tua organizzazione",
-				"description": "Hai scansionato un codice QR valido, ma non è presente nella tua organizzazione. Riprova con un altro account TempQR. Il codice QR non è stato contrassegnato come utilizzato. Qualcuno potrebbe essere stato informato di questo errore."
-			},
-			"noInternet": {
-				"title": "Nessuna connessione Internet",
-				"description": "Non hai una connessione internet. Connettiti a internet per scansionare un codice QR."
-			}
-	  	}
-	},
-	"create" : {
-		"title": "Crea",
-		"newQR": "Crea un nuovo QR code",
-		"anotherQR": "Crea un altro QR code"
-	},
-	"settings": {
-		"title": "Impostazioni",
-		"email": "Email",
-		"fullName": "Nome Completo",
-		"organizationUUID": "UUID dell'organizzazione",
-		"organizationName": "Nome dell'organizzazione",
-		"loading": "Caricamento...",
-		"update": "Aggiorna",
-		"signOut": "Esci",
-		"scanHistory": "Storico delle scansioni"
-	},
-	"scanHistory": {
-		"title": "Storico delle scansioni",
-		"id": "ID:",
-		"date": "Data di validazione:",
-		"text": "Testo:",
-		"idCopy": "ID copiato",
-		"noHistory": "Nessun storico delle scansioni"
-	},
-	"login": {
-		"title": "Login",
-		"email": "Email",
-		"password": "Password",
-		"signIn": "Entra",
-		"signUp": "Registrati"
-	}
+  "language": "Lingua",
+  "scan": {
+    "title": "Scansiona",
+    "cameraPermissionRequest": "Chiedendo i permessi per la fotocamera",
+    "noCameraPermission": "Nessun accesso alla fotocamera",
+    "scanAgain": "Scansiona di nuovo",
+    "scanning": "Scansionando...",
+    "modals": {
+      "scam": {
+        "title": "Possibile tentativo di scam",
+        "description": "Hai scansionato un codice QR che non è di TempQR. Fai attenzione perché potrebbe trattarsi di un tentativo di truffa. Qualcuno potrebbe essere stato informato di questo errore."
+      },
+      "success": {
+        "title": "Successo",
+        "description": "Hai scansionato un codice QR valido. Il codice QR è stato contrassegnato come utilizzato nel nostro database."
+      },
+      "alreadyValidated": {
+        "title": "Già convalidato",
+        "description": "Hai scansionato un codice QR già scansionato. Questo può essere positivo o negativo a seconda della tua implementazione di TempQR."
+      },
+      "error": {
+        "title": "Errore",
+        "description": "Hai scansionato un codice QR non valido. Il contenuto è plausibile, ma il database non lo contiene. Qualcuno potrebbe essere stato informato di questo errore."
+      },
+      "otherOrganization": {
+        "title": "QR code non nella tua organizzazione",
+        "description": "Hai scansionato un codice QR valido, ma non è presente nella tua organizzazione. Riprova con un altro account TempQR. Il codice QR non è stato contrassegnato come utilizzato. Qualcuno potrebbe essere stato informato di questo errore."
+      },
+      "noInternet": {
+        "title": "Nessuna connessione Internet",
+        "description": "Non hai una connessione internet. Connettiti a internet per scansionare un codice QR."
+      }
+    }
+  },
+  "create": {
+    "title": "Crea",
+    "newQR": "Crea un nuovo QR code",
+    "enterText": "Inserisci il testo che vuoi abbinare al QR code",
+    "loading": "Caricamento..."
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "email": "Email",
+    "fullName": "Nome Completo",
+    "organizationUUID": "UUID dell'organizzazione",
+    "organizationName": "Nome dell'organizzazione",
+    "loading": "Caricamento...",
+    "update": "Aggiorna",
+    "signOut": "Esci",
+    "scanHistory": "Storico delle scansioni"
+  },
+  "scanHistory": {
+    "title": "Storico delle scansioni",
+    "id": "ID:",
+    "date": "Data di validazione:",
+    "text": "Testo:",
+    "idCopy": "ID copiato",
+    "noHistory": "Nessun storico delle scansioni"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Entra",
+    "signUp": "Registrati"
+  }
 }

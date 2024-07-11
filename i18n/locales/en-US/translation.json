@@ -1,67 +1,68 @@
 {
-	"language": "Language",
-	"scan": {
-		"title": "Scan",
-		"cameraPermissionRequest": "Requesting for camera permission",
-		"noCameraPermission": "No access to camera",
-		"scanAgain": "Scan again",
-		"scanning": "Scanning...",
-		"modals": {
-			"scam": {
-				"title": "Possible scam attempt",
-				"description": "You scanned a QR code which is not by TempQR. Please be cautious as this might be a scam attempt. Someone might have been notified about this error."
-			},
-			"success": {
-				"title": "Success",
-				"description": "You scanned a valid QR code. The QR has been marked as used on our database."
-			},
-			"alreadyValidated": {
-				"title": "Already Validated",
-				"description": "You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR."
-			},
-			"error": {
-				"title": "Error",
-				"description": "You scanned an invalid QR code. The content is plausible, but the database does not contain it. Someone might have been notified about this error."
-			},
-			"otherOrganization": {
-				"title": "QR code not in your organization",
-				"description": "You scanned a valid QR code, but it's not in your organization. Try again with another TempQR account. The QR code has not been marked as used. Someone might have been notified about this error."
-			},
-			"noInternet": {
-				"title": "No Internet Connection",
-				"description": "You don't have an internet connection. Please connect to the internet to scan a QR code."
-			}
-	  	}
-	},
-	"create" : {
-		"title": "Create",
-		"newQR": "Create a new QR code",
-		"anotherQR": "Create another QR code"
-	},
-	"settings": {
-		"title": "Settings",
-		"email": "Email",
-		"fullName": "Full Name",
-		"organizationUUID": "Organization UUID",
-		"organizationName": "Organization Name",
-		"loading": "Loading...",
-		"update": "Update",
-		"signOut": "Sign out",
-		"scanHistory": "Scan History"
-	},
-	"scanHistory": {
-		"title": "Scan History",
-		"id": "ID:",
-		"date": "Validation Date:",
-		"text": "Text:",
-		"idCopy": "ID copied",
-		"noHistory": "No scan history"
-	},
-	"login": {
-		"title": "Login",
-		"email": "Email",
-		"password": "Password",
-		"signIn": "Sign in",
-		"signUp": "Sign up"
-	}
+  "language": "Language",
+  "scan": {
+    "title": "Scan",
+    "cameraPermissionRequest": "Requesting for camera permission",
+    "noCameraPermission": "No access to camera",
+    "scanAgain": "Scan again",
+    "scanning": "Scanning...",
+    "modals": {
+      "scam": {
+        "title": "Possible scam attempt",
+        "description": "You scanned a QR code which is not by TempQR. Please be cautious as this might be a scam attempt. Someone might have been notified about this error."
+      },
+      "success": {
+        "title": "Success",
+        "description": "You scanned a valid QR code. The QR has been marked as used on our database."
+      },
+      "alreadyValidated": {
+        "title": "Already Validated",
+        "description": "You scanned an already scanned QR code. This might be positive or negative according to your implementation of TempQR."
+      },
+      "error": {
+        "title": "Error",
+        "description": "You scanned an invalid QR code. The content is plausible, but the database does not contain it. Someone might have been notified about this error."
+      },
+      "otherOrganization": {
+        "title": "QR code not in your organization",
+        "description": "You scanned a valid QR code, but it's not in your organization. Try again with another TempQR account. The QR code has not been marked as used. Someone might have been notified about this error."
+      },
+      "noInternet": {
+        "title": "No Internet Connection",
+        "description": "You don't have an internet connection. Please connect to the internet to scan a QR code."
+      }
+    }
+  },
+  "create": {
+    "title": "Create",
+    "newQR": "Create a new QR code",
+    "enterText": "Enter the text you want to pair to the QR code",
+    "loading": "Loading..."
+  },
+  "settings": {
+    "title": "Settings",
+    "email": "Email",
+    "fullName": "Full Name",
+    "organizationUUID": "Organization UUID",
+    "organizationName": "Organization Name",
+    "loading": "Loading...",
+    "update": "Update",
+    "signOut": "Sign out",
+    "scanHistory": "Scan History"
+  },
+  "scanHistory": {
+    "title": "Scan History",
+    "id": "ID:",
+    "date": "Validation Date:",
+    "text": "Text:",
+    "idCopy": "ID copied",
+    "noHistory": "No scan history"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signUp": "Sign up"
+  }
 }
