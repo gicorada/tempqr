@@ -37,7 +37,8 @@
     "title": "Create",
     "newQR": "Create a new QR code",
     "enterText": "Enter the text you want to pair to the QR code",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "qrPlaceholder": "When you create a QR code, it will be shown here"
   },
   "settings": {
     "title": "Settings",

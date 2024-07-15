@@ -60,7 +60,7 @@ export default function Tab() {
             backgroundColor="white"
           />
         ) : (
-          <Text style={Texts.text}>TEST: create a qr code</Text>
+          <Text style={Texts.text}>{t("create.qrPlaceholder")}</Text>
         )}
       </View>
 
