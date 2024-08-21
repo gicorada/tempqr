@@ -1,6 +1,15 @@
 # Welcome to TempQR 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## What is TempQR
+
+TempQR is an app for the creation and check of temporary qr codes (for events etc). The app is made with react native and supabase, and supports multiple languages.
+
+![](assets/demo/Modal-it.png)
+![](assets/demo/Modal-en.jpeg)
+![](assets/demo/Qr-creation.png)
+![](assets/demo/Scan-history.png)
+
+
 
 ## Try TempQR
 
