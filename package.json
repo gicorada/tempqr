@@ -20,7 +20,7 @@
     "@react-navigation/native": "^6.0.2",
     "@react-navigation/stack": "^6.4.0",
     "@rneui/themed": "^4.0.0-rc.8",
-    "@supabase/supabase-js": "^2.44.0",
+    "@supabase/supabase-js": "^2.87.1",
     "expo": "~52.0.37",
     "expo-barcode-scanner": "~13.0.1",
     "expo-camera": "~15.0.13",
